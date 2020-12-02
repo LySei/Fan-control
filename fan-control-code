@@ -1,8 +1,9 @@
-#include <Wire.h>
+/*Lab 3 Microprocessors 2
+ *By Daniel Gomez, Lyhuor Seit and ALbert Pichardo
+ */
 #include <DS3231.h>
-
 #include <LiquidCrystal.h>
-
+//Global Variables
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 int button = 2;
 int button2 = 30;
@@ -12,30 +13,16 @@ int state;
 int buttonPush = 0;
 int buttonPushC = 0;
 int buttonPushCW = 0;
-DS3231 clock;
-RTCDateTime dt;
-//#define delay 30000
+
 #define ENABLE 5
 #define DIRA 3
 #define DIRB 4
 
 
 void setup() {
-
-  Serial.begin(9600);
-
-  Serial.println("Initialize RTC module");
-  // Initialize DS3231
-  clock.begin();
-
   
-  clock.setDateTime(__DATE__, __TIME__);    
-
-  lcd.begin(16, 2);
-  pinMode(button, INPUT);
-  //lcd.begin(16, 2);
+  pinMode(button, INPUT); 
   state = 1;
-
   //fan control
   pinMode(ENABLE,OUTPUT);
   pinMode(DIRA,OUTPUT);
@@ -45,28 +32,12 @@ void setup() {
 
 void loop() {
   
- dt = clock.getDateTime();
- 
- lcd.begin(16, 2);
- lcd.setCursor(0, 0);
- lcd.print(dt.year);   lcd.print("-");
-  lcd.print(dt.month);  lcd.print("-");
-  lcd.print(dt.day);    lcd.print(" ");
-  lcd.print(dt.hour);   lcd.print(":");
-  lcd.print(dt.minute); lcd.print(":");
-  lcd.print(dt.second); lcd.println("");
-
-  delay(1000);
-
-
 switch (state){
-  case 1:
+  case 1: //FAN OFF
     i = 0;
     lcd.begin(16, 2);
     lcd.print("Fan Off");
     analogWrite(ENABLE,LOW); //off
-    digitalWrite(DIRA,HIGH); //one way
-    digitalWrite(DIRB,LOW);
     while (i == 0)
     {
       delay(500);
@@ -78,16 +49,13 @@ switch (state){
     state = 2;
   }
 } 
-
-    
     break;
     
-  case 2:
+  case 2: //FAN HALF SPEED
     i = 0;
     analogWrite(ENABLE,112); //half speed
-    digitalWrite(DIRA,HIGH); //one way
+    digitalWrite(DIRA,HIGH); //Default Direction
     digitalWrite(DIRB,LOW);
-    //lcd.begin(16, 2);
     lcd.begin(16, 2);
     lcd.print("Fan On- 1/2");
     lcd.setCursor(0, 1);
@@ -98,9 +66,9 @@ switch (state){
   buttonPushCW = digitalRead(button3);
   buttonPushC = digitalRead(button2);
   buttonPush = digitalRead(button);
-  if (buttonPushC == 1)
+  if (buttonPushC == 1) //Change Direction CW
   {
-      digitalWrite(DIRA,HIGH); //one way
+      digitalWrite(DIRA,HIGH); 
       digitalWrite(DIRB,LOW);
     lcd.begin(16, 2);
     lcd.print("Fan On- 1/2");
@@ -108,9 +76,9 @@ switch (state){
     lcd.print("CW");
     }
   
-  if (buttonPushCW == 1)
+  if (buttonPushCW == 1) //Change Direction CCW
   {
-      digitalWrite(DIRA,LOW); //one way
+      digitalWrite(DIRA,LOW); 
       digitalWrite(DIRB,HIGH);
     lcd.begin(16, 2);
     lcd.print("Fan On- 1/2");
@@ -127,10 +95,10 @@ switch (state){
 
     break;
     
-  case 3: 
+  case 3: //3/4 SPEED
     i = 0;
-    analogWrite(ENABLE,168); //half speed
-    digitalWrite(DIRA,HIGH); //one way
+    analogWrite(ENABLE,168); //3/4 speed
+    digitalWrite(DIRA,HIGH); 
     digitalWrite(DIRB,LOW);
     //lcd.begin(16, 2);
     lcd.begin(16, 2);
@@ -145,7 +113,7 @@ switch (state){
   buttonPush = digitalRead(button);
   if (buttonPushC == 1)
   {
-      digitalWrite(DIRA,HIGH); //one way
+      digitalWrite(DIRA,HIGH); ////Change Direction CW
       digitalWrite(DIRB,LOW);
     lcd.begin(16, 2);
     lcd.print("Fan On- 3/4");
@@ -155,7 +123,7 @@ switch (state){
   
   if (buttonPushCW == 1)
   {
-      digitalWrite(DIRA,LOW); //one way
+      digitalWrite(DIRA,LOW); //Change Direction CCW
       digitalWrite(DIRB,HIGH);
     lcd.begin(16, 2);
     lcd.print("Fan On- 3/4");
@@ -172,10 +140,10 @@ switch (state){
 }
 
     
-  case 4: 
+  case 4: //FULL SPEED
     i = 0;
-    analogWrite(ENABLE,225); //half speed
-    digitalWrite(DIRA,HIGH); //one way
+    analogWrite(ENABLE,225); //Full speed
+    digitalWrite(DIRA,HIGH); 
     digitalWrite(DIRB,LOW);
     //lcd.begin(16, 2);
     lcd.begin(16, 2);
@@ -190,7 +158,7 @@ switch (state){
   buttonPush = digitalRead(button);
   if (buttonPushC == 1)
   {
-      digitalWrite(DIRA,HIGH); //one way
+      digitalWrite(DIRA,HIGH); //Change Direction CW
       digitalWrite(DIRB,LOW);
     lcd.begin(16, 2);
     lcd.print("Fan On- FULL");
@@ -200,7 +168,7 @@ switch (state){
   
   if (buttonPushCW == 1)
   {
-      digitalWrite(DIRA,LOW); //one way
+      digitalWrite(DIRA,LOW); //Change Direction CCW
       digitalWrite(DIRB,HIGH);
     lcd.begin(16, 2);
     lcd.print("Fan On- FULL");
@@ -215,11 +183,6 @@ switch (state){
 
 }
 
-    break;
-  
-  case 5:
-    lcd.print("Case 5");
-    
     break;
     
   default:
